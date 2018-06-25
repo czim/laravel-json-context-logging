@@ -2,6 +2,7 @@
 
 namespace Czim\LaravelJsonContextLogging\Factories;
 
+use Czim\LaravelJsonContextLogging\Contracts\LoggerFactoryInterface;
 use Czim\MonologJsonContext\Formatters\JsonContextFormatter;
 use Czim\MonologJsonContext\Formatters\PureJsonContextFormatter;
 use File;
@@ -12,7 +13,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
-class LoggerFactory
+class LoggerFactory implements LoggerFactoryInterface
 {
 
     /**
