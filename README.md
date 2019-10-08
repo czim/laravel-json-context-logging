@@ -11,7 +11,14 @@ Wrapper package to make use of [czim/monolog-json-context](https://github.com/cz
 
 The aim of this package is to easily set up (separate) logging to be easily grokkable by Logstash.
 
+## Version Compatibility
 
+ Laravel             | Package 
+:--------------------|:--------
+ 5.8 and below       | 0.9
+ 6.0 and up          | 1.0
+ 
+ 
 ## Installation
 
 Via Composer:
