@@ -9,51 +9,36 @@ use Illuminate\Support\ServiceProvider;
 class JsonContextLoggingServiceProvider extends ServiceProvider
 {
 
-    public function boot()
+    public function boot(): void
     {
         $this->bootConfig();
     }
 
-    public function register()
+    public function register(): void
     {
-        $this
-            ->registerConfig()
-            ->registerInterfaceBindings();
+        $this->registerConfig();
+        $this->registerInterfaceBindings();
     }
 
-    /**
-     * @return $this
-     */
-    protected function registerConfig()
+
+    protected function registerConfig(): void
     {
         $this->mergeConfigFrom(
             realpath(dirname(__DIR__) . '/../config/json-context-logging.php'),
             'json-context-logging'
         );
-
-        return $this;
     }
 
-    /**
-     * @return $this
-     */
-    protected function registerInterfaceBindings()
+    protected function registerInterfaceBindings(): void
     {
         $this->app->singleton(LoggerFactoryInterface::class, LoggerFactory::class);
-
-        return $this;
     }
 
-    /**
-     * @return $this
-     */
-    protected function bootConfig()
+    protected function bootConfig(): void
     {
         $this->publishes([
             realpath(dirname(__DIR__) . '/../config/json-context-logging.php') => config_path('json-context-logging.php'),
         ]);
-
-        return $this;
     }
 
 }

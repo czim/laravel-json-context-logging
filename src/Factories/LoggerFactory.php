@@ -5,13 +5,16 @@ namespace Czim\LaravelJsonContextLogging\Factories;
 use Czim\LaravelJsonContextLogging\Contracts\LoggerFactoryInterface;
 use Czim\MonologJsonContext\Formatters\JsonContextFormatter;
 use Czim\MonologJsonContext\Formatters\PureJsonContextFormatter;
-use File;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
+use Throwable;
 
 class LoggerFactory implements LoggerFactoryInterface
 {
@@ -22,7 +25,7 @@ class LoggerFactory implements LoggerFactoryInterface
      * @param string $channel
      * @return LoggerInterface
      */
-    public function make($channel)
+    public function make(string $channel): LoggerInterface
     {
         $path     = $this->getConfig($channel, 'path');
         $file     = $this->getConfig($channel, 'file');
@@ -53,20 +56,12 @@ class LoggerFactory implements LoggerFactoryInterface
         return new Logger($channel, [ $handler ]);
     }
 
-    /**
-     * @return bool
-     */
-    protected function shouldMakeDirectory()
+    protected function shouldMakeDirectory(): bool
     {
         return (bool) config('json-context-logging.directories.make_if_not_exists');
     }
 
-    /**
-     * Recursively creates directories for a given path.
-     *
-     * @param string $path
-     */
-    protected function makeDirectory($path)
+    protected function makeDirectory(string $path): void
     {
         $directory = pathinfo($path, PATHINFO_DIRNAME);
 
@@ -79,47 +74,39 @@ class LoggerFactory implements LoggerFactoryInterface
         File::makeDirectory($directory, $chmod, true);
     }
 
-    /**
-     * @param string $class
-     * @param string $path
-     * @param array  $parameters
-     * @return HandlerInterface
-     */
-    protected function makeHandler($class, $path = null, array $parameters = [])
+    protected function makeHandler(string $class, ?string $path = null, array $parameters = []): HandlerInterface
     {
-        $level = array_get($parameters, 'level', Logger::DEBUG);
+        $level = Arr::get($parameters, 'level', Logger::DEBUG);
 
         switch ($class) {
 
             case StreamHandler::class:
                 try {
                     return new StreamHandler($path, $level);
-                } catch (\Exception $e) {
-                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+                } catch (Throwable $e) {
+                    throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
 
 
             case RotatingFileHandler::class:
                 return new RotatingFileHandler(
                     $path,
-                    array_get($parameters, 'max_files', 0),
+                    Arr::get($parameters, 'max_files', 0),
                     $level
                 );
 
             default:
-                throw new \RuntimeException("No support for '{$class}'' handler yet.");
+                throw new RuntimeException("No support for '{$class}' handler yet.");
         }
     }
 
-    /**
-     * @param string      $type
-     * @param string|null $dateFormat
-     * @param string|null $application
-     * @param string|null $defaultCategory
-     * @return FormatterInterface
-     */
-    protected function makeFormatter($type, $dateFormat, $application, $defaultCategory)
-    {
+    protected function makeFormatter(
+        ?string $type,
+        ?string $dateFormat,
+        ?string $application,
+        ?string $defaultCategory
+    ): FormatterInterface {
+
         switch ($type) {
 
             case 'pure':
@@ -138,15 +125,15 @@ class LoggerFactory implements LoggerFactoryInterface
      * @param null|mixed $default
      * @return mixed
      */
-    protected function getConfig($channel, $key, $default = null)
+    protected function getConfig(string $channel, string $key, $default = null)
     {
         $channelConfig = config('json-context-logging.channels.' . $channel);
 
-        if ( ! is_array($channelConfig) || ! array_has($channelConfig, $key)) {
+        if ( ! is_array($channelConfig) || ! Arr::has($channelConfig, $key)) {
             return $this->getDefaultConfig($key, $default);
         }
 
-        return array_get($channelConfig, $key, $default);
+        return Arr::get($channelConfig, $key, $default);
     }
 
     /**
@@ -154,7 +141,7 @@ class LoggerFactory implements LoggerFactoryInterface
      * @param null|mixed $default
      * @return mixed
      */
-    protected function getDefaultConfig($key, $default = null)
+    protected function getDefaultConfig(string $key, $default = null)
     {
         return config('json-context-logging.default.' . $key, $default);
     }

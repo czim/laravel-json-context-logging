@@ -1,20 +1,13 @@
 <?php
 namespace Czim\LaravelJsonContextLogging\Loggers;
 
-use File;
+use Illuminate\Support\Facades\File;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractLogger implements LoggerInterface
 {
     const LOG_FILENAME  = 'laravel.log';
     const LOGS_SUB_PATH = false;
-
-    /**
-     * Maximum files for rotating file handlers.
-     *
-     * @var int
-     */
-    const MAX_FILES = 0;
 
 
     /**
@@ -24,12 +17,9 @@ abstract class AbstractLogger implements LoggerInterface
 
 
     /**
-     * Create a logger instance
-     *
-     * @param string          $path
      * @param LoggerInterface $logger
      */
-    public function __construct($path, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
@@ -41,7 +31,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function emergency($message, array $context = array())
+    public function emergency($message, array $context = array()): void
     {
         $this->logger->emergency($message, $context);
     }
@@ -55,7 +45,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function alert($message, array $context = array())
+    public function alert($message, array $context = array()): void
     {
         $this->logger->alert($message, $context);
     }
@@ -68,7 +58,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function critical($message, array $context = array())
+    public function critical($message, array $context = array()): void
     {
         $this->logger->critical($message, $context);
     }
@@ -80,7 +70,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function error($message, array $context = array())
+    public function error($message, array $context = array()): void
     {
         $this->logger->error($message, $context);
     }
@@ -94,7 +84,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function warning($message, array $context = array())
+    public function warning($message, array $context = array()): void
     {
         $this->logger->warning($message, $context);
     }
@@ -105,7 +95,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function notice($message, array $context = array())
+    public function notice($message, array $context = array()): void
     {
         $this->logger->notice($message, $context);
     }
@@ -118,7 +108,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function info($message, array $context = array())
+    public function info($message, array $context = array()): void
     {
         $this->logger->info($message, $context);
     }
@@ -129,7 +119,7 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function debug($message, array $context = array())
+    public function debug($message, array $context = array()): void
     {
         $this->logger->debug($message, $context);
     }
@@ -141,31 +131,13 @@ abstract class AbstractLogger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array()): void
     {
         $this->logger->log($level, $message, $context);
     }
 
-    /**
-     * @return string
-     */
-    protected function getDirectory()
-    {
-        return storage_path('logs' . (static::LOGS_SUB_PATH ? '/' . static::LOGS_SUB_PATH : null));
-    }
 
-    /**
-     * @return string
-     */
-    protected function getFileName()
-    {
-        return static::LOG_FILENAME;
-    }
-
-    /**
-     * @return string
-     */
-    protected function prepareLogPath()
+    protected function prepareLogPath(): string
     {
         $directory = $this->getDirectory();
         $path      = rtrim($directory, '/') . '/' . $this->getFileName();
@@ -175,13 +147,17 @@ abstract class AbstractLogger implements LoggerInterface
         return $path;
     }
 
-    /**
-     * Checks if directory exists, otherwise creates it.
-     *
-     * @param  string $directory
-     * @return void
-     */
-    protected function makeSureDirectoryExists($directory)
+    protected function getDirectory(): string
+    {
+        return storage_path('logs' . (static::LOGS_SUB_PATH ? '/' . static::LOGS_SUB_PATH : null));
+    }
+
+    protected function getFileName(): string
+    {
+        return static::LOG_FILENAME;
+    }
+
+    protected function makeSureDirectoryExists(string $directory): void
     {
         if ( ! is_dir($directory)) {
             File::makeDirectory($directory, $mode = 0777, true, true);
