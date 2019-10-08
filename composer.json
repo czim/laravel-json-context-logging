@@ -30,7 +30,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Czim\\LaravelJsonContext\\Providers\\JsonContextLoggingServiceProvider"
+                "Czim\\LaravelJsonContextLogging\\Providers\\JsonContextLoggingServiceProvider"
             ]
         }
     },
