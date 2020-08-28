@@ -18,18 +18,11 @@ use Throwable;
 
 class LoggerFactory implements LoggerFactoryInterface
 {
-
-    /**
-     * Makes a logger for the given channel.
-     *
-     * @param string $channel
-     * @return LoggerInterface
-     */
     public function make(string $channel): LoggerInterface
     {
         $path     = $this->getConfig($channel, 'path');
         $file     = $this->getConfig($channel, 'file');
-        $fullPath = rtrim($path, '/') . '/' . $file;
+        $fullPath = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file;
 
 
         if ($this->shouldMakeDirectory()) {
@@ -56,6 +49,7 @@ class LoggerFactory implements LoggerFactoryInterface
         return new Logger($channel, [ $handler ]);
     }
 
+
     protected function shouldMakeDirectory(): bool
     {
         return (bool) config('json-context-logging.directories.make_if_not_exists');
@@ -74,12 +68,17 @@ class LoggerFactory implements LoggerFactoryInterface
         File::makeDirectory($directory, $chmod, true);
     }
 
+    /**
+     * @param string      $class
+     * @param string|null $path
+     * @param mixed[]     $parameters
+     * @return HandlerInterface
+     */
     protected function makeHandler(string $class, ?string $path = null, array $parameters = []): HandlerInterface
     {
         $level = Arr::get($parameters, 'level', Logger::DEBUG);
 
         switch ($class) {
-
             case StreamHandler::class:
                 try {
                     return new StreamHandler($path, $level);
@@ -106,9 +105,8 @@ class LoggerFactory implements LoggerFactoryInterface
         ?string $application,
         ?string $defaultCategory
     ): FormatterInterface {
-
+        //
         switch ($type) {
-
             case 'pure':
                 return new PureJsonContextFormatter($dateFormat, $application, $defaultCategory);
 
@@ -129,7 +127,7 @@ class LoggerFactory implements LoggerFactoryInterface
     {
         $channelConfig = config('json-context-logging.channels.' . $channel);
 
-        if ( ! is_array($channelConfig) || ! Arr::has($channelConfig, $key)) {
+        if (! is_array($channelConfig) || ! Arr::has($channelConfig, $key)) {
             return $this->getDefaultConfig($key, $default);
         }
 
@@ -145,5 +143,4 @@ class LoggerFactory implements LoggerFactoryInterface
     {
         return config('json-context-logging.default.' . $key, $default);
     }
-
 }

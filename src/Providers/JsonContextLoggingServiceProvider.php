@@ -8,7 +8,6 @@ use Illuminate\Support\ServiceProvider;
 
 class JsonContextLoggingServiceProvider extends ServiceProvider
 {
-
     public function boot(): void
     {
         $this->bootConfig();
@@ -23,10 +22,7 @@ class JsonContextLoggingServiceProvider extends ServiceProvider
 
     protected function registerConfig(): void
     {
-        $this->mergeConfigFrom(
-            realpath(dirname(__DIR__) . '/../config/json-context-logging.php'),
-            'json-context-logging'
-        );
+        $this->mergeConfigFrom($this->configPath(), 'json-context-logging');
     }
 
     protected function registerInterfaceBindings(): void
@@ -37,8 +33,12 @@ class JsonContextLoggingServiceProvider extends ServiceProvider
     protected function bootConfig(): void
     {
         $this->publishes([
-            realpath(dirname(__DIR__) . '/../config/json-context-logging.php') => config_path('json-context-logging.php'),
+            $this->configPath() => config_path('json-context-logging.php'),
         ]);
     }
 
+    protected function configPath(): string
+    {
+        return realpath(dirname(__DIR__) . '/../config/json-context-logging.php');
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Czim\LaravelJsonContextLogging\Loggers;
 
 use Illuminate\Support\Facades\File;
@@ -6,9 +7,8 @@ use Psr\Log\LoggerInterface;
 
 abstract class AbstractLogger implements LoggerInterface
 {
-    const LOG_FILENAME  = 'laravel.log';
-    const LOGS_SUB_PATH = false;
-
+    protected const LOG_FILENAME  = 'laravel.log';
+    protected const LOGS_SUB_PATH = false;
 
     /**
      * @var LoggerInterface
@@ -16,9 +16,6 @@ abstract class AbstractLogger implements LoggerInterface
     protected $logger;
 
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -28,10 +25,10 @@ abstract class AbstractLogger implements LoggerInterface
     /**
      * System is unusable.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function emergency($message, array $context = array()): void
+    public function emergency($message, array $context = []): void
     {
         $this->logger->emergency($message, $context);
     }
@@ -42,10 +39,10 @@ abstract class AbstractLogger implements LoggerInterface
      * Example: Entire website down, database unavailable, etc. This should
      * trigger the SMS alerts and wake you up.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function alert($message, array $context = array()): void
+    public function alert($message, array $context = []): void
     {
         $this->logger->alert($message, $context);
     }
@@ -55,10 +52,10 @@ abstract class AbstractLogger implements LoggerInterface
      *
      * Example: Application component unavailable, unexpected exception.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function critical($message, array $context = array()): void
+    public function critical($message, array $context = []): void
     {
         $this->logger->critical($message, $context);
     }
@@ -67,10 +64,10 @@ abstract class AbstractLogger implements LoggerInterface
      * Runtime errors that do not require immediate action but should typically
      * be logged and monitored.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function error($message, array $context = array()): void
+    public function error($message, array $context = []): void
     {
         $this->logger->error($message, $context);
     }
@@ -81,10 +78,10 @@ abstract class AbstractLogger implements LoggerInterface
      * Example: Use of deprecated APIs, poor use of an API, undesirable things
      * that are not necessarily wrong.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function warning($message, array $context = array()): void
+    public function warning($message, array $context = []): void
     {
         $this->logger->warning($message, $context);
     }
@@ -92,10 +89,10 @@ abstract class AbstractLogger implements LoggerInterface
     /**
      * Normal but significant events.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function notice($message, array $context = array()): void
+    public function notice($message, array $context = []): void
     {
         $this->logger->notice($message, $context);
     }
@@ -105,10 +102,10 @@ abstract class AbstractLogger implements LoggerInterface
      *
      * Example: User logs in, SQL logs.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function info($message, array $context = array()): void
+    public function info($message, array $context = []): void
     {
         $this->logger->info($message, $context);
     }
@@ -116,10 +113,10 @@ abstract class AbstractLogger implements LoggerInterface
     /**
      * Detailed debug information.
      *
-     * @param string $message
-     * @param array  $context
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function debug($message, array $context = array()): void
+    public function debug($message, array $context = []): void
     {
         $this->logger->debug($message, $context);
     }
@@ -127,11 +124,11 @@ abstract class AbstractLogger implements LoggerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed  $level
-     * @param string $message
-     * @param array  $context
+     * @param mixed   $level
+     * @param string  $message
+     * @param mixed[] $context
      */
-    public function log($level, $message, array $context = array()): void
+    public function log($level, $message, array $context = []): void
     {
         $this->logger->log($level, $message, $context);
     }
@@ -140,7 +137,7 @@ abstract class AbstractLogger implements LoggerInterface
     protected function prepareLogPath(): string
     {
         $directory = $this->getDirectory();
-        $path      = rtrim($directory, '/') . '/' . $this->getFileName();
+        $path      = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->getFileName();
 
         $this->makeSureDirectoryExists($directory);
 

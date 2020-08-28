@@ -13,12 +13,12 @@ The aim of this package is to easily set up (separate) logging to be easily grok
 
 ## Version Compatibility
 
- Laravel             | Package 
+ Laravel             | Package
 :--------------------|:--------
  5.8 and below       | 0.9
  6.0 and up          | 1.0
- 
- 
+
+
 ## Installation
 
 Via Composer:
