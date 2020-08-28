@@ -39,7 +39,7 @@ return [
 
         'context' => [
             // A short string identifying this application
-            'application' => config('app.name', app()->environment()),
+            'application' => env('APP_NAME', env('APP_ENV')),
             // The default category name (any custom string) for log entries
             'category'    => null,
         ],
