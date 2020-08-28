@@ -89,7 +89,7 @@ class LoggerFactory implements LoggerFactoryInterface
         switch ($class) {
             case StreamHandler::class:
                 try {
-                    return new StreamHandler($path, $level);
+                    return new StreamHandler($path, $level, true, $this->logFileRights());
                 } catch (Throwable $e) {
                     throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
                 }
@@ -99,7 +99,9 @@ class LoggerFactory implements LoggerFactoryInterface
                 return new RotatingFileHandler(
                     $path,
                     Arr::get($parameters, 'max_files', 0),
-                    $level
+                    $level,
+                    true,
+                    $this->logFileRights()
                 );
 
             default:
