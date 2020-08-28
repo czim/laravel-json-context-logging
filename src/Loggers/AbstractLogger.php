@@ -156,8 +156,13 @@ abstract class AbstractLogger implements LoggerInterface
 
     protected function makeSureDirectoryExists(string $directory): void
     {
-        if ( ! is_dir($directory)) {
-            File::makeDirectory($directory, $mode = 0777, true, true);
+        if (! is_dir($directory)) {
+            File::makeDirectory($directory, $this->directoryPermissions(), true, true);
         }
+    }
+
+    protected function directoryPermissions(): int
+    {
+        return config('json-context-logging.directories.chmod', 0755);
     }
 }

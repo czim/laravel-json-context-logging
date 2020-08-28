@@ -86,8 +86,9 @@ return [
 
         // Silently create a new directory for the logs if it does not yet exist.
         'make_if_not_exists' => true,
-        // The flags to set for a newly create log dir.
-        'chmod'              => 755,
+        // The flags to set for a newly created log dir.
+        'chmod'              => 0755,
+        'file_chmod'         => 0644,
     ],
 
 ];

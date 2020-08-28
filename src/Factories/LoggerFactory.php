@@ -55,6 +55,16 @@ class LoggerFactory implements LoggerFactoryInterface
         return (bool) config('json-context-logging.directories.make_if_not_exists');
     }
 
+    protected function directoryRights(): int
+    {
+        return config('json-context-logging.directories.chmod', 0755);
+    }
+
+    protected function logFileRights(): int
+    {
+        return config('json-context-logging.directories.file_chmod', 0644);
+    }
+
     protected function makeDirectory(string $path): void
     {
         $directory = pathinfo($path, PATHINFO_DIRNAME);
@@ -63,9 +73,7 @@ class LoggerFactory implements LoggerFactoryInterface
             return;
         }
 
-        $chmod = config('json-context-logging.directories.chmod', 755);
-
-        File::makeDirectory($directory, $chmod, true);
+        File::makeDirectory($directory, $this->directoryRights(), true);
     }
 
     /**
