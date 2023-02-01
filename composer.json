@@ -4,7 +4,7 @@
     "authors": [
         {
             "name": "Coen Zimmerman",
-            "email": "coen@pxlwidgets.com"
+            "email": "coen.zimmerman@endeavour.nl"
         }
     ],
     "keywords": [ "laravel", "monolog", "formatting", "json" ],
