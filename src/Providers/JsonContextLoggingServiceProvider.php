@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelJsonContextLogging\Providers;
 
 use Czim\LaravelJsonContextLogging\Contracts\LoggerFactoryInterface;

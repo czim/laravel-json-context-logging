@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Czim\LaravelJsonContextLogging\Loggers;
 
 use Illuminate\Support\Facades\File;
