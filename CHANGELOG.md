@@ -1,5 +1,10 @@
 # Changelog
 
+### [3.0.0] - 2023-04-07
+
+Updated for monolog 3.0+.
+For Laravel 10 and up.
+
 ### [2.0.0] - 2023-02-01
 
 Updated to new psr/log interface (3.0.0+).
