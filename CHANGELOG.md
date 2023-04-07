@@ -3,7 +3,7 @@
 ### [2.0.0] - 2023-02-01
 
 Updated to new psr/log interface (3.0.0+).
-For Laravel 9 and up.
+For Laravel 9.
 
 ### [1.0.3] - 2020-08-28
 
