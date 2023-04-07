@@ -7,6 +7,7 @@ namespace Czim\LaravelJsonContextLogging\Factories;
 use Czim\LaravelJsonContextLogging\Contracts\LoggerFactoryInterface;
 use Czim\MonologJsonContext\Formatters\JsonContextFormatter;
 use Czim\MonologJsonContext\Formatters\PureJsonContextFormatter;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Monolog\Formatter\FormatterInterface;
@@ -20,6 +21,10 @@ use Throwable;
 
 class LoggerFactory implements LoggerFactoryInterface
 {
+    public function __construct(protected ConfigRepository $config)
+    {
+    }
+
     public function make(string $channel): LoggerInterface
     {
         $path     = $this->getConfig($channel, 'path');
@@ -54,17 +59,17 @@ class LoggerFactory implements LoggerFactoryInterface
 
     protected function shouldMakeDirectory(): bool
     {
-        return (bool) config('json-context-logging.directories.make_if_not_exists');
+        return (bool) $this->config->get('json-context-logging.directories.make_if_not_exists');
     }
 
     protected function directoryRights(): int
     {
-        return config('json-context-logging.directories.chmod', 0755);
+        return $this->config->get('json-context-logging.directories.chmod', 0755);
     }
 
     protected function logFileRights(): int
     {
-        return config('json-context-logging.directories.file_chmod', 0644);
+        return $this->config->get('json-context-logging.directories.file_chmod', 0644);
     }
 
     protected function makeDirectory(string $path): void
@@ -125,7 +130,7 @@ class LoggerFactory implements LoggerFactoryInterface
 
     protected function getConfig(string $channel, string $key, mixed $default = null): mixed
     {
-        $channelConfig = config('json-context-logging.channels.' . $channel);
+        $channelConfig = $this->config->get('json-context-logging.channels.' . $channel);
 
         if (! is_array($channelConfig) || ! Arr::has($channelConfig, $key)) {
             return $this->getDefaultConfig($key, $default);
@@ -136,6 +141,6 @@ class LoggerFactory implements LoggerFactoryInterface
 
     protected function getDefaultConfig(string $key, mixed $default = null): mixed
     {
-        return config('json-context-logging.default.' . $key, $default);
+        return $this->config->get('json-context-logging.default.' . $key, $default);
     }
 }
