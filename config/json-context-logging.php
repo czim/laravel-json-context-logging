@@ -26,7 +26,7 @@ return [
             // Custom parameters for constructor
             'parameters' => [
                 'max_files' => null,
-                'level'     => \Monolog\Logger::DEBUG,
+                'level'     => \Monolog\Level::Debug->value,
             ],
         ],
 
