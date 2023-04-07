@@ -48,7 +48,7 @@ class LoggerFactory implements LoggerFactoryInterface
         );
 
 
-        return new Logger($channel, [ $handler ]);
+        return new Logger($channel, [$handler]);
     }
 
 
@@ -79,9 +79,9 @@ class LoggerFactory implements LoggerFactoryInterface
     }
 
     /**
-     * @param string      $class
-     * @param string|null $path
-     * @param mixed[]     $parameters
+     * @param string               $class
+     * @param string|null          $path
+     * @param array<string, mixed> $parameters
      * @return HandlerInterface
      */
     protected function makeHandler(string $class, ?string $path = null, array $parameters = []): HandlerInterface
@@ -92,8 +92,8 @@ class LoggerFactory implements LoggerFactoryInterface
             case StreamHandler::class:
                 try {
                     return new StreamHandler($path, $level, true, $this->logFileRights());
-                } catch (Throwable $e) {
-                    throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
+                } catch (Throwable $exception) {
+                    throw new RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
                 }
 
 
@@ -115,27 +115,15 @@ class LoggerFactory implements LoggerFactoryInterface
         ?string $type,
         ?string $dateFormat,
         ?string $application,
-        ?string $defaultCategory
+        ?string $defaultCategory,
     ): FormatterInterface {
-        //
-        switch ($type) {
-            case 'pure':
-                return new PureJsonContextFormatter($dateFormat, $application, $defaultCategory);
-
-            default:
-                return new JsonContextFormatter($dateFormat, $application, $defaultCategory);
-        }
+        return match ($type) {
+            'pure'  => new PureJsonContextFormatter($dateFormat, $application, $defaultCategory),
+            default => new JsonContextFormatter($dateFormat, $application, $defaultCategory),
+        };
     }
 
-    /**
-     * Returns a config value for a channel with fallback to default.
-     *
-     * @param string     $channel
-     * @param string     $key
-     * @param null|mixed $default
-     * @return mixed
-     */
-    protected function getConfig(string $channel, string $key, $default = null)
+    protected function getConfig(string $channel, string $key, mixed $default = null): mixed
     {
         $channelConfig = config('json-context-logging.channels.' . $channel);
 
@@ -146,12 +134,7 @@ class LoggerFactory implements LoggerFactoryInterface
         return Arr::get($channelConfig, $key, $default);
     }
 
-    /**
-     * @param string     $key
-     * @param null|mixed $default
-     * @return mixed
-     */
-    protected function getDefaultConfig(string $key, $default = null)
+    protected function getDefaultConfig(string $key, mixed $default = null): mixed
     {
         return config('json-context-logging.default.' . $key, $default);
     }
